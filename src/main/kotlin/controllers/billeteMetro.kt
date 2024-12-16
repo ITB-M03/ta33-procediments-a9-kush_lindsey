@@ -10,6 +10,10 @@ data class PrecioBilletes(
 )
 fun main() {
     val billetes : Array<PrecioBilletes> = arrayOf(
+        /*no hace flaat los tres de los data clas, pq el valor ya se multiplica por tot en los billetes dependendo de la zona
+        entonces da iual poner el tipo de billete solo tenems que poner la multiplicacion que realiza en funcion de la zona que
+         haya elegido en usuario
+         */
         PrecioBilletes(
             "zona1",
             2.40f,
