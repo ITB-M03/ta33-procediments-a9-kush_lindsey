@@ -1,4 +1,4 @@
-package org.example.controllers
+package controllers
 
 import java.util.*
 
@@ -14,18 +14,44 @@ data class PrecioBilletes(
 fun main() {
     val billetes: Array<PrecioBilletes> = arrayOf(
         PrecioBilletes("Zona 1", 2.40f, 11.35f, 40.00f, 10.00f, 80.00f),
-        PrecioBilletes("Zona 2", 2.40f*1.3125f, 11.35f*1.3125f, 40.00f*1.3125f, 10.00f*1.3125f, 80.00f*1.3125f),
-        PrecioBilletes("Zona 3", 2.40f*1.8443f, 11.35f*1.8443f, 40.00f*1.8443f, 10.00f*1.8443f, 80.00f*1.8443f),
+        PrecioBilletes(
+            "Zona 2",
+            2.40f * 1.3125f,
+            11.35f * 1.3125f,
+            40.00f * 1.3125f,
+            10.00f * 1.3125f,
+            80.00f * 1.3125f
+        ),
+        PrecioBilletes(
+            "Zona 3",
+            2.40f * 1.8443f,
+            11.35f * 1.8443f,
+            40.00f * 1.8443f,
+            10.00f * 1.8443f,
+            80.00f * 1.8443f
+        ),
     )
 
     val scanner = Scanner(System.`in`).useLocale(Locale.UK)
+    val salir = false
+    while(salir==false) {
+        var procesos = 0
+        var precioTotal = 0f
+        var billetesComprados = ""
+        do {
+            val billete = tipoBillete(scanner)
+            val zona = tipoZona(scanner)
+            val precioBillete = calcularCoste(billetes, zona, billete)
+            billetesComprados += "$billete - $zona - Preu: " + (precioBillete * 100).toInt() / 100.0 + "€" + "\n"
+            precioTotal += precioBillete
+            val respuesta: Boolean = repetirProceso(scanner)
+            procesos++
+        } while (procesos < 3 && respuesta)
 
-    val billete = tipoBillete(scanner)
-    val zona = tipoZona(scanner)
-    val precio = calcularCoste(billetes, zona, billete)
+        pagar(precioTotal, scanner)
+        mostrarTicket(billetesComprados)
+    }
 
-    pagar(precio, scanner)
-    mostrarTicket(billete, billetes[zona - 1].zonas, precio)
     scanner.close()
 }
 
@@ -52,13 +78,14 @@ fun tipoBillete(scanner: Scanner): String {
     }
 }
 
-fun tipoZona(scanner: Scanner): Int {
+fun tipoZona(scan: Scanner): Int {
     println("Quina zona vol viatjar?")
     println("1 - Zona 1")
     println("2 - Zona 2")
     println("3 - Zona 3")
-
-    return when (val zona = scanner.nextInt()) {
+    val zona=scan.nextInt()
+    scan.nextLine()
+    return when (zona) {
         in 1..3 -> zona
         else -> {
             println("Zona no vàlida. S'agafarà Zona 1 per defecte.")
@@ -77,6 +104,21 @@ fun calcularCoste(billetes: Array<PrecioBilletes>, zona: Int, tipoBillete: Strin
         "TJove" -> precios.tjove
         else -> 0.0f
     }
+}
+fun repetirProceso(scan:Scanner):Boolean{
+    println("Vols seguir comprant?[S,N]")
+    val pedirRespuesta = scan.nextLine().lowercase()
+    var respuesta = false
+    if (pedirRespuesta == "s"){
+        respuesta=true
+    }
+    else if (pedirRespuesta=="n"){
+        respuesta=false
+    }
+    else {
+        println("ERROR")
+    }
+    return respuesta
 }
 
 fun pagar(precio: Float, scanner: Scanner) {
@@ -103,9 +145,20 @@ fun pagar(precio: Float, scanner: Scanner) {
     println("Pagament completat!")
 }
 
-fun mostrarTicket(billete: String, zonas: String, precio: Float) {
-    println("_____TICKET_____")
-    println("$billete - $zonas - Preu: " + (precio * 100).toInt() / 100.0 + "€")
-    println("________________")
-    println("Reculli el teu tiquet. Adeu!!")
+fun mostrarTicket(billetesComprados: String) {
+    println("Vols el teu ticket?[S,N]")
+    val scanner = Scanner(System.`in`).useLocale(Locale.UK)
+    val respuestaSoN = scanner.nextLine().lowercase()
+    if (respuestaSoN =="s") {
+        println("_____TICKET_____")
+        println(billetesComprados)
+        println("________________")
+        println("Reculli el teu tiquet. Adeu!!")
+
+    }
+    else if (respuestaSoN =="n"){
+    }
+    else{
+        println("ERROR")
+    }
 }
